@@ -1,0 +1,4 @@
+data:
+  application.properties: |-
+    spring.datasource.url=jdbc:postgresql://postgres:5432/argocd
+    spring.datasource.username=argocd2
