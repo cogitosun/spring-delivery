@@ -97,14 +97,6 @@ spec:
               memory: 256Mi
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
-          volumeMounts:
-            - mountPath: /mnt/properties
-              name: properties-volume
-            - mountPath: /mnt/secrets
-              name: secrets-volume
-            - mountPath: /mnt/logs
-              name: logs-mount
-              subPath: logs
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
