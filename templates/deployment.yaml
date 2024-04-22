@@ -115,11 +115,6 @@ spec:
             defaultMode: 420
             name: spring.properties
           name: properties-volume
-        - name: secrets-volume
-          secret:
-            defaultMode: 420
-            secretName: rating-intg.secrets
-        - name: logs-mount
-          persistentVolumeClaim:
-            claimName: rating-logs-metrics
+
+
 
