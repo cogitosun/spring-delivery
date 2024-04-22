@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app: spring    
+    tags: cogitosun
+  labels:
+    app: spring
+    app.kubernetes.io/instance: spring-delivery
+    app.kubernetes.io/name: spring
+    company: Cogitosum
+    gitOrg: cogitosun
+    gitRepo: spring
+    imageName: spring
+    province: Quebec
+    tagVersion: 0.51.0
+  name: spring
+  namespace: argocd
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: spring
+      deploymentconfig: spring
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: spring
+        deploymentconfig: spring
+        gitOrg: Rating
+        gitRepo: spring
+        imageName: spring
+        tagVersion: 0.51.0
+    spec:
+      containers:
+        - env:
+            - name: ENVIRONMENT
+              value: intg
+            - name: CONTEXT
+            - name: GROUP_ID
+              value: intact.rest
+            - name: CONFIGMAP_LONGVERSION
+              value: 0.51.0
+            - name: PROJECT_LONGVERSION
+              value: 0.51.0
+            - name: PROVINCE
+              value: Quebec
+            - name: COMPANY
+              value: Intact
+            - name: TZ
+              value: America/Montreal
+          image: 'docker-group.iad.ca.inet:8473/spring:0.51.0'
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 8
+            httpGet:
+              path: /actuator/info
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 600
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: spring
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8443
+              protocol: TCP
+            - containerPort: 8778
+              name: jolokia
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/info
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: '1'
+              memory: 1536Mi
+            requests:
+              cpu: 50m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /mnt/properties
+              name: properties-volume
+            - mountPath: /mnt/secrets
+              name: secrets-volume
+            - mountPath: /mnt/logs
+              name: logs-mount
+              subPath: logs
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: spring.properties
+          name: properties-volume
+        - name: secrets-volume
+          secret:
+            defaultMode: 420
+            secretName: rating-intg.secrets
+        - name: logs-mount
+          persistentVolumeClaim:
+            claimName: rating-logs-metrics
+
