@@ -1,0 +1,19 @@
+image: ''
+repository: ''
+repositories:
+  spring:
+    images:
+      spring:
+        container: spring-container
+        domain: cogitosun
+        imageName: spring
+        volumeMounts:
+          - name: spring-logs
+            mountPath: /mnt/properties
+            subPath: logs
+        volumes:
+          - name: spring-logs
+            emptyDir: {}
+    groupId: spring
+    imageVersion: 1.0.0
+    organization: cogitosun
